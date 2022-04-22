@@ -20,23 +20,23 @@ class Substitution:
         # Corners: [top right, bottom right, bottim left, top left]
         return corners, ids
 
-    # def augmentAruco(self, corner, id, img, imgAug):
-    #     # print(id, "\n")
-    #     tl = corner[0][0][0], corner[0][0][1]
-    #     tr = corner[0][1][0], corner[0][1][1]
-    #     br = corner[0][2][0], corner[0][2][1]
-    #     bl = corner[0][3][0], corner[0][3][1]
+    def setSourceVideo(self, filename):
+        self.sourceVideo = filename
 
-    #     h, w, c = imgAug.shape
+    def getSourceVideo(self):
+        return self.sourceVideo
 
-    #     pts1 = np.array([tl, tr, br, bl])
-    #     pts2 = np.float32([[0, 0], [w, 0], [w, h], [0, h]])
-    #     matrix, _ = cv2.findHomography(pts2, pts1)
-    #     imgOut = cv2.warpPerspective(
-    #         imgAug, matrix, (img.shape[1], img.shape[0]))
-    #     cv2.fillConvexPoly(img, pts1.astype(int), (0, 0, 0))
-    #     imgOut = img + imgOut
-    #     return imgOut
+    def setDestinationVideo(self, filename):
+        self.destinationVideo = filename
+
+    def getDestinationVideo(self):
+        return self.getDestinationVideo
+
+    def setOutputVideo(self, filename):
+        self.outputVideo = filename
+
+    def getOutputVideo(self):
+        return self.outputVideo
 
 
 def main():
