@@ -42,9 +42,9 @@ class Substitution:
 def main():
     subs = Substitution()
     cap = cv2.VideoCapture(2)
-    video = cv2.VideoCapture("frame.mov")
-    videoAug = cv2.VideoCapture("falcon.mov")
-    out = cv2.VideoWriter('output.avi', cv2.VideoWriter_fourcc(
+    video = cv2.VideoCapture("C:/Users/tasin/OneDrive/Desktop/CV-project/frame.mov")
+    videoAug = cv2.VideoCapture("C:/Users/tasin/OneDrive/Desktop/CV-project/falcon.mov")
+    out = cv2.VideoWriter('C:/Users/tasin/OneDrive/Desktop/CV-project/output.avi', cv2.VideoWriter_fourcc(
         *'MPEG'), 45, (int(video.get(3)), int(video.get(4))))
     while True:
         _, img = cap.read()
