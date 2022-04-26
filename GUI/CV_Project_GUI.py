@@ -5,7 +5,7 @@ root = tk.Tk()
 
 videoplayer = TkinterVideo(master=root, scaled=True, pre_load=False)
 videoplayer.load(r"falcon.mov")
-videoplayer.pack(expand=True, fill="both")
+videoplayer.pack(expand=True, fill="none")
 
 videoplayer.play()  # play the video
 
@@ -17,21 +17,23 @@ from tkVideoPlayer import TkinterVideo
 
 window = Tk()
 window.title("Tkinter Play Videos in Video Player")
-window.geometry("700x450")
-window.configure(bg="orange red")
+window.geometry("1000x8000")
+window.configure(bg="grey")
 
 
 def open_file():
     file = askopenfile(mode='r', filetypes=[
-        ('Video Files', ["*.mp4"])])
+        ('Video Files', ["*"])])
     if file is not None:
         global filename
         filename = file.name
         global videoplayer
         videoplayer = TkinterVideo(master=window, scaled=True, pre_load=False)
         videoplayer.load(r"{}".format(filename))
-        videoplayer.pack(expand=True, fill="both")
+        videoplayer.pack(expand=True, fill="none")
+        # videoplayer.set_size(200, 200)
         videoplayer.play()
+
 
 
 def playAgain():
@@ -68,3 +70,4 @@ pausebtn = Button(window, text='Pause Video', command=lambda: PauseVideo())
 pausebtn.pack(side=TOP, padx=5)
 
 window.mainloop()
+
