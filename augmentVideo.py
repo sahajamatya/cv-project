@@ -1,7 +1,16 @@
+from this import d
 import cv2
 import cv2.aruco as aruco
 import numpy as np
 import os
+
+from tkinter import *
+from tkinter.ttk import *
+from tkinter.filedialog import askopenfile
+from tkVideoPlayer import TkinterVideo
+import time
+import tkinter as tk
+from tkVideoPlayer import TkinterVideo
 
 
 class Substitution:
@@ -30,7 +39,7 @@ class Substitution:
         self.destinationVideo = filename
 
     def getDestinationVideo(self):
-        return self.getDestinationVideo
+        return self.destinationVideo
 
     def setOutputVideo(self, filename):
         self.outputVideo = filename
@@ -39,18 +48,20 @@ class Substitution:
         return self.outputVideo
 
 
-def main():
-    subs = Substitution()
-    cap = cv2.VideoCapture(2)
-    video = cv2.VideoCapture("C:/Users/tasin/OneDrive/Desktop/CV-project/frame.mov")
-    videoAug = cv2.VideoCapture("C:/Users/tasin/OneDrive/Desktop/CV-project/falcon.mov")
-    out = cv2.VideoWriter('C:/Users/tasin/OneDrive/Desktop/CV-project/output.avi', cv2.VideoWriter_fourcc(
+def augment(src, dest, subs):
+    video = cv2.VideoCapture(dest.split("/")[-1])
+    videoAug = cv2.VideoCapture(src.split("/")[-1])
+    print("=====")
+    print(src.split("/")[-1], dest.split("/")[-1])
+    print("=====")
+    out = cv2.VideoWriter('output.avi', cv2.VideoWriter_fourcc(
         *'MPEG'), 45, (int(video.get(3)), int(video.get(4))))
+    i=0
     while True:
-        _, img = cap.read()
+        if (i > 100):
+            break
         _, imgAug = videoAug.read()
         _, frame = video.read()
-        # imgOut = img
         corners, ids = subs.findArucoMarkers(frame)
 
         if ids is not None:
@@ -73,18 +84,60 @@ def main():
                     imgAug, matrix, (frame.shape[1], frame.shape[0]))
                 cv2.fillConvexPoly(frame, pts1.astype(int), (0, 0, 0))
                 imgOut = frame + imgOut
-
-        # cv2.namedWindow("arUco", cv2.WINDOW_NORMAL)
-        # cv2.namedWindow("Augment", cv2.WINDOW_NORMAL)
-        # cv2.resizeWindow('Augment', 800, 450)
-        # cv2.resizeWindow('arUco', 800, 450)
-        # cv2.imshow("Augment", frame)
-        # cv2.imshow("arUco", imgOut)
+        print(i)
+        i=i+1
         out.write(imgOut)
-        key = cv2.waitKey(1)
-        if key == 27 or key == ord('q'):
-            cv2.destroyAllWindows()
-            break
+
+
+def main():
+    window = Tk()
+    subs = Substitution()
+    window.title("Tkinter Play Videos in Video Player")
+    window.geometry("1200x1200")
+    window.configure()
+
+    def open_file(typeOfFile):
+        if typeOfFile == "output":
+            augment(subs.getSourceVideo(), subs.getDestinationVideo(), subs)
+            videoplayerOutput = TkinterVideo(
+                master=window, scaled=True, pre_load=False)
+            videoplayerOutput.load("output.avi")
+            videoplayerOutput.place(x=500, y=500)
+            videoplayerOutput.play()
+        else:
+            file = askopenfile(mode='r')
+            if file is not None:
+                global filename
+                filename = file.name
+                global videoplayer
+                videoplayer = TkinterVideo(
+                    master=window, scaled=True, pre_load=False)
+                videoplayer.load(r"{}".format(filename))
+                if typeOfFile == "source":
+                    subs.setSourceVideo(filename)
+                    videoplayer.place(x=100, y=150)
+                elif typeOfFile == "dest":
+                    subs.setDestinationVideo(filename)
+                    videoplayer.place(x=900, y=150)
+                videoplayer.play()
+
+    lbl1 = Label(window, text="Video on Video Augmentation",
+                 font="none 24 bold")
+    lbl1.config(anchor=CENTER)
+    lbl1.place(relx=0.5, y=20, anchor=CENTER)
+
+    sourceBtn = Button(window, text='Select Source Video',
+                       command=lambda: open_file("source"))
+    sourceBtn.place(x=100, y=100)
+
+    destBtn = Button(window, text='Select Destination Video',
+                     command=lambda: open_file("dest"))
+    destBtn.place(x=900, y=100)
+
+    outputBtn = Button(window, text='Generate Output Video',
+                       command=lambda: open_file("output"))
+    outputBtn.place(relx=0.5, y=300, anchor=CENTER)
+    window.mainloop()
 
 
 if __name__ == "__main__":
