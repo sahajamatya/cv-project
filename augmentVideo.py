@@ -14,8 +14,6 @@ from tkVideoPlayer import TkinterVideo
 from ttkthemes import themed_tk as tk
 
 
-
-
 class Substitution:
     def __init__(self, sourceVideo="", destinationVideo="", outputVideo=""):
         self.sourceVideo = sourceVideo
@@ -62,7 +60,7 @@ def augment(src, dest, subs):
 
     i = 0
     while True:
-        if (i > 100)
+        if (i > 700):
             break
         _, imgAug = videoAug.read()
         _, frame = video.read()
@@ -70,7 +68,7 @@ def augment(src, dest, subs):
 
         if ids is not None:
             if len(ids) > 0:
-                
+
                 for corner, id in zip(corners, ids):
                     if id == [0]:
                         tl = int(corner[0][0][0]), int(corner[0][0][1])
@@ -88,7 +86,7 @@ def augment(src, dest, subs):
                     imgAug, matrix, (frame.shape[1], frame.shape[0]))
                 cv2.fillConvexPoly(frame, pts1.astype(int), (0, 0, 0))
                 imgOut = frame + imgOut
-        i = i+ 1
+        i = i + 1
         out.write(imgOut)
         key = cv2.waitKey(1)
         if key == 27 or key == ord('q'):
@@ -104,9 +102,9 @@ def main():
     window.title("Tkinter Play Videos in Video Player")
     window.geometry("1200x700")
     window.configure(bg='#D2D4F3')
-    size = [300,150]
-    outSize = [400,200]
-    
+    size = [300, 150]
+    outSize = [400, 200]
+
     def open_file(typeOfFile):
         if typeOfFile == "output":
             augment(subs.getSourceVideo(), subs.getDestinationVideo(), subs)
@@ -119,7 +117,7 @@ def main():
         else:
             file = askopenfile(mode='r')
             if file is not None:
-                
+
                 filename = file.name
                 global videoplayer
                 videoplayer = TkinterVideo(
