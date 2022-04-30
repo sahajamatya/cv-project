@@ -11,6 +11,7 @@ from tkVideoPlayer import TkinterVideo
 import time
 import tkinter as tk
 from tkVideoPlayer import TkinterVideo
+from ttkthemes import themed_tk as tk
 
 
 class Substitution:
@@ -29,14 +30,14 @@ class Substitution:
         # Corners: [top right, bottom right, bottim left, top left]
         return corners, ids
 
-    def setSourceVideo(self, filename):
-        self.sourceVideo = filename
+    def setSourceVideo(self, source_filename):
+        self.sourceVideo = source_filename
 
     def getSourceVideo(self):
         return self.sourceVideo
 
-    def setDestinationVideo(self, filename):
-        self.destinationVideo = filename
+    def setDestinationVideo(self, destination_filename):
+        self.destinationVideo = destination_filename
 
     def getDestinationVideo(self):
         return self.destinationVideo
@@ -56,14 +57,17 @@ def augment(src, dest, subs):
     print("=====")
     out = cv2.VideoWriter('output.avi', cv2.VideoWriter_fourcc(
         *'MPEG'), 45, (int(video.get(3)), int(video.get(4))))
+
+    i = 0
     while True:
+        if (i > 700):
+            break
         _, imgAug = videoAug.read()
         _, frame = video.read()
         corners, ids = subs.findArucoMarkers(frame)
 
         if ids is not None:
             if len(ids) > 0:
-                # print(ids)
                 for corner, id in zip(corners, ids):
                     if id == [0]:
                         tl = int(corner[0][0][0]), int(corner[0][0][1])
@@ -81,6 +85,7 @@ def augment(src, dest, subs):
                     imgAug, matrix, (frame.shape[1], frame.shape[0]))
                 cv2.fillConvexPoly(frame, pts1.astype(int), (0, 0, 0))
                 imgOut = frame + imgOut
+        i = i + 1
         out.write(imgOut)
         key = cv2.waitKey(1)
         if key == 27 or key == ord('q'):
@@ -89,11 +94,15 @@ def augment(src, dest, subs):
 
 
 def main():
-    window = Tk()
+    window = tk.ThemedTk()
+    window.get_themes()
+    window.set_theme("radiance")
     subs = Substitution()
     window.title("Tkinter Play Videos in Video Player")
-    window.geometry("1200x1200")
-    window.configure()
+    window.geometry("1200x700")
+    window.configure(bg='#D2D4F3')
+    size = [300, 150]
+    outSize = [400, 200]
 
     def open_file(typeOfFile):
         if typeOfFile == "output":
@@ -102,22 +111,27 @@ def main():
                 master=window, scaled=True, pre_load=False)
             print(videoplayerOutput.load(r"{}".format('output.avi')))
             videoplayerOutput.place(relx=0.5, y=500, anchor=CENTER)
+            videoplayerOutput.set_size(outSize)
             videoplayerOutput.play()
         else:
             file = askopenfile(mode='r')
             if file is not None:
-                global filename
+
                 filename = file.name
                 global videoplayer
                 videoplayer = TkinterVideo(
                     master=window, scaled=True, pre_load=False)
                 videoplayer.load(r"{}".format(filename))
                 if typeOfFile == "source":
-                    subs.setSourceVideo(filename)
+                    source_filename = filename
+                    subs.setSourceVideo(source_filename)
                     videoplayer.place(x=100, y=150)
+                    videoplayer.set_size(size)
                 elif typeOfFile == "dest":
-                    subs.setDestinationVideo(filename)
-                    videoplayer.place(x=900, y=150)
+                    destination_filename = filename
+                    subs.setDestinationVideo(destination_filename)
+                    videoplayer.place(x=850, y=150)
+                    videoplayer.set_size(size)
                 videoplayer.play()
 
     lbl1 = Label(window, text="Video on Video Augmentation",
@@ -139,8 +153,8 @@ def main():
     window.mainloop()
 
     subs = Substitution()
-    video = cv2.VideoCapture("frame.mov")
-    videoAug = cv2.VideoCapture("falcon.mov")
+    video = cv2.VideoCapture(destination_filename)
+    videoAug = cv2.VideoCapture(source_filename)
     out = cv2.VideoWriter('output.avi', cv2.VideoWriter_fourcc(
         *'MPEG'), 45, (int(video.get(3)), int(video.get(4))))
     while True:
