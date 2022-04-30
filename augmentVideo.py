@@ -60,7 +60,10 @@ def augment(src, dest, subs):
     out = cv2.VideoWriter('output.avi', cv2.VideoWriter_fourcc(
         *'MPEG'), 45, (int(video.get(3)), int(video.get(4))))
 
+    i = 0
     while True:
+        if (i > 100)
+            break
         _, imgAug = videoAug.read()
         _, frame = video.read()
         corners, ids = subs.findArucoMarkers(frame)
@@ -85,6 +88,7 @@ def augment(src, dest, subs):
                     imgAug, matrix, (frame.shape[1], frame.shape[0]))
                 cv2.fillConvexPoly(frame, pts1.astype(int), (0, 0, 0))
                 imgOut = frame + imgOut
+        i = i+ 1
         out.write(imgOut)
         key = cv2.waitKey(1)
         if key == 27 or key == ord('q'):
