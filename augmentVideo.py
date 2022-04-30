@@ -68,7 +68,6 @@ def augment(src, dest, subs):
 
         if ids is not None:
             if len(ids) > 0:
-
                 for corner, id in zip(corners, ids):
                     if id == [0]:
                         tl = int(corner[0][0][0]), int(corner[0][0][1])
